@@ -9,15 +9,21 @@ class CompanyChooser extends React.Component {
     super(props);
     this.state = {
       dataSource: [],
+      value: null
     };
+  }
+
+  handleChange(value) {
+    this.setState({value});
   }
 
   render() {
     return (
       <div>
         <AutoComplete
-          hintText='Company Name'
+          floatingLabelText='Company Name'
           dataSource={this.state.dataSource}
+          onUpdateInput={this.handleChange.bind(this)}
         />
       </div>
     )

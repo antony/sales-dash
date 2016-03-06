@@ -1,4 +1,4 @@
-// Update: Hey Folks - I've got a full Gulpfile with everything else over at https://github.com/wesbos/React-For-Beginners-Starter-Files
+'use strict';
 
 const source = require('vinyl-source-stream');
 const gulp = require('gulp');
@@ -10,6 +10,7 @@ const watchify = require('watchify');
 const notify = require('gulp-notify');
 const nodemon = require('gulp-nodemon');
 const sass = require('gulp-sass');
+const concat = require('gulp-concat');
 
 function handleErrors() {
   var args = Array.prototype.slice.call(arguments);
@@ -20,10 +21,14 @@ function handleErrors() {
   this.emit('end'); // Keep gulp from hanging on this task
 }
 
+let staticFiles = {
+  js: ['./node_modules/jquery/dist/jquery.js']
+};
+
 function buildScript(file, watch) {
 
   var props = {
-    entries: ['./src/components/' + file],
+    entries: [`./src/components/${file}`],
     extensions: ['.jsx'],
     debug : true
   };
@@ -64,6 +69,12 @@ gulp.task('sass:watch', function () {
   gulp.watch('./src/assets/sass/**/*.scss', ['sass']);
 });
 
+gulp.task('thirdparty:js', function() {
+  return gulp.src(staticFiles.js)
+  .pipe(concat('thirdparty.js'))
+  .pipe(gulp.dest('./public/thirdparty'));
+});
+
 gulp.task('run', function() {
   nodemon({ script : './app.js', ignore: ['build/*', 'src/assets/*', 'public/*'], ext : 'js' });
 });
@@ -72,6 +83,6 @@ gulp.task('scripts', ['sass:watch'], function() {
   return buildScript('client.js', false);
 });
 
-gulp.task('default', ['scripts', 'run'], function() {
+gulp.task('default', ['scripts', 'thirdparty:js', 'run'], function() {
   return buildScript('client.js', true);
 });

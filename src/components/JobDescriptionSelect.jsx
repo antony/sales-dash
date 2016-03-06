@@ -4,11 +4,17 @@ import React from 'react';
 import SelectField from 'material-ui/lib/select-field';
 import MenuItem from 'material-ui/lib/menus/menu-item';
 
-export default class UserSelect extends React.Component {
+export default class JobDescriptionSelect extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {value: 2};
+    this.state = {
+      value: 2
+    };
+    let menuItems = ['Same Day', 'Next Day', 'Economy Pal.', 'Sea Export', 'Int. Courier', 'Road Import'].map((desc, i) => {
+      return <MenuItem value={i} key={i} primaryText={desc} />
+    });
+    this.state.dataSource = menuItems;
   }
 
   handleChange(event, index, value) {
@@ -19,12 +25,10 @@ export default class UserSelect extends React.Component {
     return (
       <div>
         <SelectField
-          floatingLabelText='Your Name'
+          floatingLabelText='Job Description'
           value={this.state.value}
           onChange={this.handleChange.bind(this)}>
-            <MenuItem value={1} primaryText="Antony Jones"/>
-            <MenuItem value={2} primaryText="Alex Elliott"/>
-            <MenuItem value={3} primaryText="Rob Clog"/>
+          {this.state.dataSource}
         </SelectField>
       </div>
     );
