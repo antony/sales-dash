@@ -1,15 +1,15 @@
 // Update: Hey Folks - I've got a full Gulpfile with everything else over at https://github.com/wesbos/React-For-Beginners-Starter-Files
 
-var source = require('vinyl-source-stream');
-var gulp = require('gulp');
-var gutil = require('gulp-util');
-var browserify = require('browserify');
-var reactify = require('reactify');
-var babelify = require('babelify');
-var watchify = require('watchify');
-var notify = require('gulp-notify');
-var nodemon = require('gulp-nodemon');
-
+const source = require('vinyl-source-stream');
+const gulp = require('gulp');
+const gutil = require('gulp-util');
+const browserify = require('browserify');
+const reactify = require('reactify');
+const babelify = require('babelify');
+const watchify = require('watchify');
+const notify = require('gulp-notify');
+const nodemon = require('gulp-nodemon');
+const sass = require('gulp-sass');
 
 function handleErrors() {
   var args = Array.prototype.slice.call(arguments);
@@ -54,11 +54,21 @@ function buildScript(file, watch) {
   return rebundle();
 }
 
-gulp.task('run', function() {
-  nodemon({ script : './app.js', ignore: ['./build', './src/assets', './public'], ext : 'js' });
+gulp.task('sass', function () {
+  return gulp.src('./src/assets/sass/**/*.scss')
+  .pipe(sass().on('error', sass.logError))
+  .pipe(gulp.dest('./public/css'));
 });
 
-gulp.task('scripts', function() {
+gulp.task('sass:watch', function () {
+  gulp.watch('./src/assets/sass/**/*.scss', ['sass']);
+});
+
+gulp.task('run', function() {
+  nodemon({ script : './app.js', ignore: ['build/*', 'src/assets/*', 'public/*'], ext : 'js' });
+});
+
+gulp.task('scripts', ['sass:watch'], function() {
   return buildScript('client.js', false);
 });
 
