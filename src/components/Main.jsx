@@ -42,17 +42,18 @@ class Main extends React.Component {
 
   handleSubmit(e) {
     e.preventDefault();
-    let form = {
+    let form = Object.assign({}, this.state, {
       user: this.refs.user.state.value,
       company: this.refs.company.state.value,
-      bookingDate: this.refs.bookingDate.state.value,
-      saleDate: this.refs.saleDate.state.value,
       jobDescription: this.refs.jobDescription.state.value,
-      saleAmount: this.refs.saleAmount.state.value,
-      jobCost: this.refs.jobCost.state.value
-    };
+    });
 
     console.log(form);
+  }
+
+  handleUpdate(field, evt, value) {
+    let newValue = value || evt.target.value;
+    this.state[field] = newValue;
   }
 
   render() {
@@ -68,12 +69,12 @@ class Main extends React.Component {
           <form className="saleForm" onSubmit={this.handleSubmit.bind(this)}>
             <UserSelect ref="user" />
             <CompanyChooser ref="company" />
-            <DatePicker ref="bookingDate" floatingLabelText='First Booking' />
-            <DatePicker  ref="saleDate" floatingLabelText='Sale Date' />
+            <DatePicker ref="bookingDate" onChange={this.handleUpdate.bind(this, 'bookingDate')} floatingLabelText='First Booking' />
+            <DatePicker ref="saleDate" onChange={this.handleUpdate.bind(this, 'saleDate')} floatingLabelText='Sale Date' />
             <JobDescriptionSelect ref="jobDescription" />
-            <TextField ref="saleAmount" floatingLabelText='Sale Amount' />
+            <TextField ref="saleAmount" onChange={this.handleUpdate.bind(this, 'saleAmount')} floatingLabelText='Sale Amount' />
             <br />
-            <TextField ref="jobCost" floatingLabelText='Job Cost' />
+            <TextField ref="jobCost" onChange={this.handleUpdate.bind(this, 'jobCost')} floatingLabelText='Job Cost' />
             <br />
             <RaisedButton
               label="Enter Sale"
