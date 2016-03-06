@@ -41,13 +41,13 @@ function buildScript(file, watch) {
     return stream
     .on('error', handleErrors)
     .pipe(source(file))
+    .pipe(notify("Finished Rebuild"))
     .pipe(gulp.dest('./public/'));
   }
 
   // listen for an update and run rebundle
   bundler.on('update', function() {
     rebundle();
-    gutil.log('Rebundle...');
   });
 
   // run it once the first time buildScript is called
