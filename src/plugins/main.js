@@ -1,5 +1,7 @@
 'use strict';
 
+let Joi = require('joi');
+
 const MainPlugin = {
   register: function (server, options, next) {
 
@@ -10,6 +12,27 @@ const MainPlugin = {
         reply.view('index');
       }
     });
+
+    server.route({
+      method: 'POST',
+      path: '/api/sale',
+      config: {
+        validate: {
+          payload: {
+            bookingDate: Joi.date().required(),
+            company: Joi.string().required(),
+            jobCost: Joi.number().required(),
+            jobDescription: Joi.string().required(),
+            saleAmount: Joi.number().required(),
+            saleDate: Joi.date().required(),
+            user: Joi.string().required()
+          }
+        }
+      },
+      handler: function(request, reply) {
+        reply();
+      }
+    })
 
     next();
   }

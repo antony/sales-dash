@@ -27,6 +27,7 @@ export default class JobDescriptionSelect extends React.Component {
         <SelectField
           floatingLabelText='Job Description'
           value={this.state.value}
+          errorText={this.state.errorText}
           onChange={this.handleChange.bind(this)}>
           {this.state.dataSource}
         </SelectField>

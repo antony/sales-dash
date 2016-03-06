@@ -24,6 +24,7 @@ class CompanyChooser extends React.Component {
           floatingLabelText='Company Name'
           dataSource={this.state.dataSource}
           onUpdateInput={this.handleChange.bind(this)}
+          errorText={this.state.errorText}
         />
       </div>
     )
