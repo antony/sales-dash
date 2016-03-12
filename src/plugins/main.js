@@ -30,7 +30,8 @@ const MainPlugin = {
         }
       },
       handler: function(request, reply) {
-        reply();
+        console.log('Got this', request.payload);
+        reply({});
       }
     })
 

@@ -1,6 +1,7 @@
 'use strict';
 
 import React from 'react';
+import Freezer from 'freezer-js';
 import MuiThemeProvider from 'material-ui/lib/MuiThemeProvider';
 import Dialog from 'material-ui/lib/dialog';
 import RaisedButton from 'material-ui/lib/raised-button';
@@ -24,7 +25,9 @@ class Main extends React.Component {
 
   constructor(props, context) {
     super(props, context);
-    this.state = {};
+    this.state = new Freezer({
+      user: 1
+    });
     this.styles = {
       containedButton: {
         cursor: 'pointer',
@@ -47,13 +50,25 @@ class Main extends React.Component {
     }
   }
 
+  componentDidMount() {
+    let me = this;
+    this.state.on('update', () => { me.forceUpdate() });
+
+    let fields = ['user', 'company', 'bookingDate', 'saleDate', 'jobDescription', 'saleAmount', 'jobCost'];
+
+    for(let field of fields) {
+      this.state.on(`sale:set:${field}`, (value) => {
+        console.log('Setting', field, 'to', value);
+        this.state.get().set(field, value);
+      });
+    }
+  }
+
   handleSubmit(e) {
     e.preventDefault();
 
-    let form = {};
-    Object.keys(this.refs).map((field) => {
-      form[field] = this.refs[field].state.value;
-    });
+    let form = this.state.get();
+    console.log(form);
 
     $.ajax({
       type: "POST",
@@ -74,10 +89,30 @@ class Main extends React.Component {
     });
   }
 
-  handleUpdate(field, evt, value) {
-    let newValue = value || evt.target.value;
-    newValue = (typeof newValue === 'Date') ? newValue.toISOString() : newValue;
-    this.refs[field].setState({value: newValue});
+  generateHandlerFor(field) {
+    return (event, value) => {
+      let newValue = value || event.target.value;
+      this.state.trigger(`sale:set:${field}`, newValue);
+    }
+  }
+
+  generateDateHandler(field) {
+    return (event, value) => {
+      this.state.trigger(`sale:set:${field}`, value.toISOString());
+    }
+  }
+
+  generateDropdownHandlerFor(field) {
+    return (event, index, value) => {
+      this.state.trigger(`sale:set:${field}`, value);
+    }
+  }
+
+  generateNewRequestHandlerFor(field) {
+    return (value) => {
+      console.log('GOg here.');
+      this.state.trigger(`sale:set:${field}`, value);
+    }
   }
 
   render() {
@@ -92,14 +127,14 @@ class Main extends React.Component {
           <Paper style={this.styles.paper} zDepth={2}>
           <h2>Enter Sale</h2>
             <form className="saleForm" onSubmit={this.handleSubmit.bind(this)}>
-              <UserSelect ref="user" />
-              <CompanyChooser ref="company" />
-              <DatePicker ref="bookingDate" onChange={this.handleUpdate.bind(this, 'bookingDate')} errorText={this.state.errorText} floatingLabelText='First Booking' />
-              <DatePicker ref="saleDate" onChange={this.handleUpdate.bind(this, 'saleDate')} errorText={this.state.errorText} floatingLabelText='Sale Date' />
-              <JobDescriptionSelect ref="jobDescription" />
-              <TextField ref="saleAmount" onChange={this.handleUpdate.bind(this, 'saleAmount')} errorText={this.state.errorText} floatingLabelText='Sale Amount' />
+              <UserSelect ref="user" value={ this.state.get().user } onChange={ this.generateDropdownHandlerFor('user') } />
+              <CompanyChooser ref="company" onUpdateInput={ this.generateNewRequestHandlerFor('company') } onNewRequest={ this.generateNewRequestHandlerFor('company') } />
+              <DatePicker ref="bookingDate" onChange={ this.generateDateHandler('bookingDate') } errorText={this.state.errorText} floatingLabelText='First Booking' />
+              <DatePicker ref="saleDate" onChange={ this.generateDateHandler('saleDate') } errorText={this.state.errorText} floatingLabelText='Sale Date' />
+              <JobDescriptionSelect ref="jobDescription" onChange={ this.generateDropdownHandlerFor('jobDescription') } />
+              <TextField ref="saleAmount" onChange={ this.generateHandlerFor('saleAmount') } errorText={this.state.errorText} floatingLabelText='Sale Amount' />
               <br />
-              <TextField ref="jobCost" onChange={this.handleUpdate.bind(this, 'jobCost')} errorText={this.state.errorText} floatingLabelText='Job Cost' />
+              <TextField ref="jobCost" onChange={ this.generateHandlerFor('jobCost') } errorText={this.state.errorText} floatingLabelText='Job Cost' />
               <br />
               <RaisedButton
                 label="Enter Sale"

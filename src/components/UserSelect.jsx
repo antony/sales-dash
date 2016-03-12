@@ -8,20 +8,22 @@ export default class UserSelect extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {value: 2};
+    this.state = {
+      value: props.value
+    };
+    this.handleOnChange = this.handleOnChange.bind(this);
+    console.log(this.state);
   }
 
-  handleChange(event, index, value) {
-    this.setState({value});
+  handleOnChange(event, index, value) {
+    this.state.value = value;
+    this.props.onChange(event, index, value);
   }
 
   render() {
     return (
       <div>
-        <SelectField
-          floatingLabelText='Your Name'
-          value={this.state.value}
-          onChange={this.handleChange.bind(this)}>
+        <SelectField value={ this.state.value } onChange={ this.handleOnChange } floatingLabelText="Your Name">
             <MenuItem value={1} primaryText="Antony Jones"/>
             <MenuItem value={2} primaryText="Alex Elliott"/>
             <MenuItem value={3} primaryText="Rob Clog"/>

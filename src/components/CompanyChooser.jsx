@@ -13,17 +13,14 @@ class CompanyChooser extends React.Component {
     };
   }
 
-  handleChange(value) {
-    this.setState({value});
-  }
-
   render() {
     return (
       <div>
         <AutoComplete
+          onUpdateInput={ this.props.onUpdateInput }
+          onNewRequest={ this.props.onNewRequest }
           floatingLabelText='Company Name'
           dataSource={this.state.dataSource}
-          onUpdateInput={this.handleChange.bind(this)}
           errorText={this.state.errorText}
         />
       </div>

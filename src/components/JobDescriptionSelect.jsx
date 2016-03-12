@@ -9,16 +9,18 @@ export default class JobDescriptionSelect extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: 2
+      value: props.value
     };
     let menuItems = ['Same Day', 'Next Day', 'Economy Pal.', 'Sea Export', 'Int. Courier', 'Road Import'].map((desc, i) => {
       return <MenuItem value={i} key={i} primaryText={desc} />
     });
     this.state.dataSource = menuItems;
+    this.handleOnChange = this.handleOnChange.bind(this);
   }
 
-  handleChange(event, index, value) {
-    this.setState({value});
+  handleOnChange(event, index, value) {
+    this.state.value = value;
+    this.props.onChange(event, index, value);
   }
 
   render() {
@@ -28,7 +30,7 @@ export default class JobDescriptionSelect extends React.Component {
           floatingLabelText='Job Description'
           value={this.state.value}
           errorText={this.state.errorText}
-          onChange={this.handleChange.bind(this)}>
+          onChange={ this.handleOnChange }>
           {this.state.dataSource}
         </SelectField>
       </div>
