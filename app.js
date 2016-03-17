@@ -19,8 +19,9 @@ server.register([
 
   require('inert'),
   require('vision'),
-  require('./src/plugins/main'),
-  require('./src/plugins/static')
+  require('./src/plugins/static'),
+  require('./src/plugins/google-sheets'),
+  require('./src/plugins/main')
 
 ], (err) => {
 

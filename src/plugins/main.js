@@ -1,13 +1,14 @@
 'use strict';
 
-let Joi = require('joi');
+let Joi = require('joi'),
+    Boom = require('boom');
 
 const MainPlugin = {
   register: function (server, options, next) {
 
     server.route({
       method: 'GET',
-      path: '/',
+      path: '/{params*}',
       handler: function (request, reply) {
         reply.view('index');
       }
@@ -30,8 +31,13 @@ const MainPlugin = {
         }
       },
       handler: function(request, reply) {
-        console.log('Got this', request.payload);
-        reply({});
+
+        server.methods.sheet.add(request.payload, (err) => {
+
+          if (err) { reply(Boom.wrap(err, 400)); }
+
+          reply({});
+        });
       }
     })
 
