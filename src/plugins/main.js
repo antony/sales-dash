@@ -20,7 +20,6 @@ const MainPlugin = {
       config: {
         validate: {
           payload: {
-            bookingDate: Joi.date().required(),
             company: Joi.string().required(),
             jobCost: Joi.number().required(),
             jobDescription: Joi.string().required(),
@@ -38,6 +37,26 @@ const MainPlugin = {
 
           reply({});
         });
+      }
+    });
+
+    server.route({
+      method: 'GET',
+      path: '/api/companies',
+      handler: function(request, reply) {
+
+        server.methods.sheet.fetch((err, entries) => {
+
+          if (err) { return reply(err); }
+
+          let companies = entries.map((entry) => {
+            return entry.company;
+          })
+
+          reply(companies);
+
+        })
+
       }
     })
 

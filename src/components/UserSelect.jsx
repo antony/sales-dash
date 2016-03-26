@@ -24,9 +24,9 @@ export default class UserSelect extends React.Component {
     return (
       <div>
         <SelectField value={ this.state.value } onChange={ this.handleOnChange } floatingLabelText="Your Name">
-            <MenuItem value={1} primaryText="Antony Jones"/>
-            <MenuItem value={2} primaryText="Alex Elliott"/>
-            <MenuItem value={3} primaryText="Rob Clog"/>
+            <MenuItem value="ant@enzy.org" primaryText="Antony Jones"/>
+            <MenuItem value="alex@orbital-direct.co.uk" primaryText="Alex Elliott"/>
+            <MenuItem value="rob@cl.og" primaryText="Rob Clog"/>
         </SelectField>
       </div>
     );

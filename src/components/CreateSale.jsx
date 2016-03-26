@@ -12,6 +12,7 @@ import DatePicker from 'material-ui/lib/date-picker/date-picker';
 import JobDescriptionSelect from './JobDescriptionSelect';
 import TextField from 'material-ui/lib/text-field';
 import Paper from 'material-ui/lib/paper';
+import reqwest from 'reqwest';
 
 class CreateSale extends React.Component {
 
@@ -49,25 +50,20 @@ class CreateSale extends React.Component {
   handleSubmit(e) {
     e.preventDefault();
 
-    let form = this.state.get();
-
-    $.ajax({
-      type: "POST",
+    reqwest({
+      method: 'POST',
       url: '/api/sale',
-      data: form,
-      dataType: 'json',
-      success: function() {
-        console.log('done');
-      },
-      error: function(resp, a, b) {
-        let json = JSON.parse(resp.responseText);
-
-        for (let key of json.validation.keys) {
-          this.refs[key].setState({errorText: 'Error Here'});
-        }
-
-      }.bind(this)
+      data: this.state.get()
+    })
+    .then((result) => {
+      console.log('Happy!');
+    })
+    .catch((e, json) => {
+      for (let key of json.validation.keys) {
+        this.refs[key].setState({errorText: 'Error Here'});
+      }
     });
+
   }
 
   generateHandlerFor(field) {
@@ -79,7 +75,7 @@ class CreateSale extends React.Component {
 
   generateDateHandler(field) {
     return (event, value) => {
-      this.state.trigger(`sale:set:${field}`, value.toISOString());
+      this.state.trigger(`sale:set:${field}`, value.toDateString());
     }
   }
 
@@ -103,7 +99,6 @@ class CreateSale extends React.Component {
           <form className="saleForm" onSubmit={this.handleSubmit.bind(this)}>
             <UserSelect ref="user" value={ this.state.get().user } onChange={ this.generateDropdownHandlerFor('user') } />
             <CompanyChooser ref="company" onUpdateInput={ this.generateNewRequestHandlerFor('company') } onNewRequest={ this.generateNewRequestHandlerFor('company') } />
-            <DatePicker ref="bookingDate" onChange={ this.generateDateHandler('bookingDate') } errorText={this.state.errorText} floatingLabelText='First Booking' />
             <DatePicker ref="saleDate" onChange={ this.generateDateHandler('saleDate') } errorText={this.state.errorText} floatingLabelText='Sale Date' />
             <JobDescriptionSelect ref="jobDescription" onChange={ this.generateDropdownHandlerFor('jobDescription') } />
             <TextField ref="saleAmount" onChange={ this.generateHandlerFor('saleAmount') } errorText={this.state.errorText} floatingLabelText='Sale Amount' />
